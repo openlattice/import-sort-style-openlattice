@@ -1,0 +1,41 @@
+{
+  "name": "import-sort-style-openlattice",
+  "version": "0.0.0",
+  "homepage": "https://github.com/openlattice/import-sort-style-openlattice",
+  "description": "OpenLattice import-sort style",
+  "author": {
+    "name": "OpenLattice, Inc.",
+    "email": "support@openlattice.com",
+    "url": "https://openlattice.com"
+  },
+  "contributors": [
+    {
+      "name": "Hristo Oskov",
+      "email": "hristo@openlattice.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openlattice/import-sort-style-openlattice.git"
+  },
+  "bugs": {
+    "url": "https://github.com/openlattice/import-sort-style-openlattice/issues"
+  },
+  "license": "Apache-2.0",
+  "main": "build/index.js",
+  "files": [
+    "build"
+  ],
+  "devDependencies": {
+    "@babel/cli": "~7.7.0",
+    "@babel/core": "~7.7.0",
+    "@babel/preset-env": "~7.7.0",
+    "babel-eslint": "~10.0.0",
+    "eslint": "~6.7.0",
+    "eslint-config-airbnb-base": "~14.0.0",
+    "eslint-plugin-import": "~2.18.0"
+  },
+  "scripts": {
+    "build": "babel src --out-dir build"
+  }
+}
