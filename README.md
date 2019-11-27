@@ -9,6 +9,11 @@ Install the `atom-import-sort` package.
 
 https://atom.io/packages/atom-import-sort
 
+Install this package.
+
+```
+npm install --save-dev import-sort-style-openlattice
+```
 
 Add `.importsortrc` to your project:
 ```
