@@ -17,12 +17,13 @@ export default function({
 }) {
 
   const isLocalModule = (imported) => Boolean(imported.moduleName.match(/^\.\//));
+  const isTildeModule = (imported) => Boolean(imported.moduleName.match(/^~\//));
   const isReact = (imported) => Boolean(imported.moduleName.match(/^(react|react-dom)$/));
   const isTypeImport = (imported) => Boolean(imported.type === 'import-type');
 
   return [
     // import 'thing'
-    { match: and(hasNoMember, isAbsoluteModule) },
+    { match: and(hasNoMember, isAbsoluteModule, not(isTildeModule)) },
     { separator: true },
 
     // import './thing'
@@ -45,11 +46,11 @@ export default function({
     },
     { separator: true },
 
-    /*
-     *
-     * ABSOLUTE
-     *
-     */
+    //
+    //
+    // ABSOLUTE
+    //
+    //
 
     // import UpperThing from 'thing';
     // import lowerThing from 'thing';
@@ -57,6 +58,7 @@ export default function({
       match: and(
         hasOnlyDefaultMember,
         isAbsoluteModule,
+        not(isTildeModule),
         not(isTypeImport),
       ),
       sort: member(unicode),
@@ -69,6 +71,7 @@ export default function({
         hasDefaultMember,
         hasNamedMembers,
         isAbsoluteModule,
+        not(isTildeModule),
         not(isTypeImport),
       ),
       sort: member(unicode),
@@ -80,6 +83,7 @@ export default function({
       match: and(
         hasOnlyNamespaceMember,
         isAbsoluteModule,
+        not(isTildeModule),
         not(isTypeImport),
       ),
       sort: member(unicode),
@@ -90,6 +94,7 @@ export default function({
       match: and(
         hasOnlyNamedMembers,
         isAbsoluteModule,
+        not(isTildeModule),
         not(isTypeImport),
       ),
       sort: moduleName(unicode),
@@ -101,17 +106,80 @@ export default function({
       match: and(
         isTypeImport,
         isAbsoluteModule,
+        not(isTildeModule),
       ),
       sort: moduleName(unicode),
       sortNamedMembers: name(unicode),
     },
     { separator: true },
 
-    /*
-     *
-     * RELATIVE - local
-     *
-     */
+    //
+    //
+    // TILDE
+    //
+    //
+
+    // import UpperThing from '~/path';
+    // import lowerThing from '~/path';
+    {
+      match: and(
+        hasOnlyDefaultMember,
+        isTildeModule,
+        not(isTypeImport),
+      ),
+      sort: member(unicode),
+    },
+
+    // import UpperThing, { innerThing } from '~/path';
+    // import lowerThing, { innerThing } from '~/path';
+    {
+      match: and(
+        hasDefaultMember,
+        hasNamedMembers,
+        isTildeModule,
+        not(isTypeImport),
+      ),
+      sort: member(unicode),
+      sortNamedMembers: name(unicode),
+    },
+
+    // import * as Thing from '~/path';
+    {
+      match: and(
+        hasOnlyNamespaceMember,
+        isTildeModule,
+        not(isTypeImport),
+      ),
+      sort: member(unicode),
+    },
+
+    // import { innerThing1, innerThing2 } from '~/path';
+    {
+      match: and(
+        hasOnlyNamedMembers,
+        isTildeModule,
+        not(isTypeImport),
+      ),
+      sort: [dotSegmentCount, moduleName(unicode)],
+      sortNamedMembers: name(unicode),
+    },
+
+    // import type { ... } from '~/path';
+    {
+      match: and(
+        isTypeImport,
+        isTildeModule,
+      ),
+      sort: [dotSegmentCount, moduleName(unicode)],
+      sortNamedMembers: name(unicode),
+    },
+    { separator: true },
+
+    //
+    //
+    // RELATIVE - local
+    //
+    //
 
     // import UpperThing from './path';
     // import lowerThing from './path';
@@ -169,11 +237,11 @@ export default function({
     },
     { separator: true },
 
-    /*
-     *
-     * RELATIVE - non-local
-     *
-     */
+    //
+    //
+    // RELATIVE - non-local
+    //
+    //
 
     // import UpperThing from '../../path';
     // import lowerThing from '../../path';
